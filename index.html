@@ -35,12 +35,18 @@ h2{font-size:clamp(30px,5vw,48px);font-weight:800;letter-spacing:-.02em;margin-b
 .lead{color:var(--mut);max-width:40em;margin-bottom:34px}
 .dz{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:36px;align-items:start}
 .dz>div:first-child{order:2}
-.stage{border:1px solid var(--ln);position:sticky;top:12px;aspect-ratio:1/1.1;background:var(--st);border-radius:22px;overflow:hidden;touch-action:none;user-select:none}
+.stage{border:1px solid var(--ln);position:relative;aspect-ratio:1/1.1;background:var(--st);border-radius:22px;overflow:hidden;user-select:none}
+.pv{position:sticky;top:12px;align-self:start}
+.pv .pos{justify-content:center;margin-top:10px}
+.tabs{display:flex;border-bottom:1px solid var(--ln);margin-bottom:18px}
+.tabs button{flex:1;background:none;border:0;border-bottom:3px solid transparent;color:var(--mut);padding:12px 6px;font:600 15px Figtree,sans-serif;cursor:pointer}
+.tabs button[aria-selected=true]{color:var(--ink);border-color:var(--pk2)}
+.nx{margin-top:16px}
 .stage>img{position:absolute;inset:4%;width:92%;height:92%;object-fit:contain;pointer-events:none}
 .lg{position:absolute;transform:translate(-50%,-50%);cursor:grab;touch-action:none;display:none}
 .lg img{display:block;width:100%;pointer-events:none}
 .lg.on{display:block;outline:2px dashed var(--pk2);outline-offset:3px}
-.empty{position:absolute;left:0;right:0;bottom:14px;text-align:center;font-size:14px;color:#6d5a62;padding:0 16px}
+.empty{text-align:center;font-size:13px;color:var(--mut);margin-top:6px}
 .ctl{display:grid;gap:26px}
 .ctl h3{font-size:21px;margin-bottom:12px;font-weight:800}
 details{border-top:1px solid var(--ln)}details:last-of-type{border-bottom:1px solid var(--ln)}
@@ -84,7 +90,7 @@ textarea{resize:vertical;min-height:72px}
 .ct .btn{background:#1d1418;color:#fff}
 .ct dl{display:grid;gap:14px}.ct dt{font-weight:600}.ct dd{margin:0}
 footer{text-align:center;padding:26px 20px;color:var(--mut);font-size:14px}
-@media(max-width:860px){nav a:not(.btn){display:none}.hero .w,.dz,.ct .w{grid-template-columns:1fr}.hero figure{width:min(70%,300px);order:-1}.stage{border:1px solid var(--ln);position:relative;top:0}.dz>div:first-child{order:0}.sv,.stp{grid-template-columns:1fr 1fr}.fm{grid-template-columns:1fr 1fr}section{padding:52px 0}}
+@media(max-width:860px){nav a:not(.btn){display:none}.hero .w,.dz,.ct .w{grid-template-columns:1fr}.hero figure{width:min(70%,300px);order:-1}.dz>div:first-child{order:0}.pv{top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;margin:0 -20px;padding:8px 20px 6px}.stage{width:min(100%,240px);width:min(100%,33svh);margin:auto}.pv .pos{gap:6px;margin-top:8px}.pos button{padding:7px 11px;font-size:13px}.empty{margin-top:4px}.sv,.stp{grid-template-columns:1fr 1fr}.fm{grid-template-columns:1fr 1fr}section{padding:52px 0}}
 @media(max-width:520px){.sv,.stp{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style></head><body>
@@ -106,21 +112,23 @@ footer{text-align:center;padding:26px 20px;color:var(--mut);font-size:14px}
 <h2>Diseña tu prenda</h2>
 <p class="lead">Elige la prenda, sube tu logo o bordado y arrástralo hasta donde lo quieres. Cuando te guste cómo queda, descarga la imagen y envíanos el pedido por WhatsApp.</p>
 <div class="dz">
-<div>
+<div class="pv">
 <div class="stage" id="stage"><img id="gimg" alt="">
-<div class="lg" id="lg" tabindex="0" role="img" aria-label="Tu logo. Arrástralo o usa las flechas del teclado para moverlo"><img id="limg" alt=""></div>
-<p class="empty" id="empty">Aún no has subido tu logo.</p></div>
+<div class="lg" id="lg" tabindex="0" role="img" aria-label="Tu logo. Arrástralo o usa las flechas del teclado para moverlo"><img id="limg" alt=""></div></div>
+<div class="pos" id="pos"><button type="button" data-x="62" data-y="30" aria-pressed="false">Pecho izquierdo</button><button type="button" data-x="50" data-y="36" aria-pressed="false">Pecho centro</button><button type="button" data-x="50" data-y="52" aria-pressed="false">Centro grande</button></div>
+<p class="empty" id="empty">Sube tu logo en el paso 2 y arrástralo sobre la prenda.</p>
 </div>
 <div class="ctl">
-<div><h3>1. Elige la prenda</h3><div id="gar"></div><p class="gn" id="gn"></p></div>
-<div><h3>2. Sube y coloca tu logo</h3>
+<div class="tabs" role="tablist"><button role="tab" id="t0" aria-controls="p0" aria-selected="true">1. Prenda</button><button role="tab" id="t1" aria-controls="p1" aria-selected="false">2. Logo</button><button role="tab" id="t2" aria-controls="p2" aria-selected="false">3. Pedido</button></div>
+<div id="p0" role="tabpanel" aria-labelledby="t0"><div id="gar"></div><p class="gn" id="gn"></p><button class="btn o nx" type="button" data-go="1">Siguiente: tu logo</button></div>
+<div id="p1" role="tabpanel" aria-labelledby="t1" hidden>
 <div class="up"><label class="btn" id="upl">Subir logo o bordado<input type="file" id="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><button class="chk" id="clr" type="button" hidden>Quitar logo</button></div>
 <p class="msg" id="err" role="alert"></p>
-<div class="pos" id="pos"><button type="button" data-x="62" data-y="30" aria-pressed="false">Pecho izquierdo</button><button type="button" data-x="50" data-y="36" aria-pressed="false">Pecho centro</button><button type="button" data-x="50" data-y="52" aria-pressed="false">Centro grande</button></div>
 <div class="rg"><label for="sz">Tamaño</label><input type="range" id="sz" min="8" max="60" value="22"><label for="rt">Giro</label><input type="range" id="rt" min="-45" max="45" value="0"></div>
 <label class="chk"><input type="checkbox" id="nb"> Quitar fondo blanco del logo</label>
-<p class="hint">La vista previa muestra solo el frente. Si lo quieres en la espalda o en una manga, indícalo en las notas.</p></div>
-<div><h3>3. Envía tu pedido</h3>
+<p class="hint">Elige la posición debajo de la prenda o arrastra el logo con el dedo. La vista previa muestra solo el frente; si lo quieres en la espalda o en una manga, indícalo en las notas.</p>
+<button class="btn o nx" type="button" data-go="2">Siguiente: tu pedido</button></div>
+<div id="p2" role="tabpanel" aria-labelledby="t2" hidden>
 <div class="fm">
 <label>Tipo de venta<select id="vt"><option>Al detal</option><option>Al mayor</option></select></label>
 <label>Talla<select id="tl"><option>XS</option><option>S</option><option selected>M</option><option>L</option><option>XL</option><option>XXL</option></select></label>
@@ -219,5 +227,8 @@ $('dl').onclick=async()=>{
   if(!ok){$('pv').src=c.toDataURL('image/png');$('pvw').hidden=false;e2.textContent='Mantén presionada la imagen (o clic derecho) y elige “Guardar imagen”. Luego adjúntala en el chat de WhatsApp.'}
  }catch(e){if(!e||e.code!=='declined')e2.textContent='No se pudo guardar la imagen. Inténtalo de nuevo.'}
 };
+const tab=n=>[0,1,2].forEach(i=>{$('t'+i).setAttribute('aria-selected',i===n);$('p'+i).hidden=i!==n});
+[0,1,2].forEach(i=>$('t'+i).onclick=()=>tab(i));
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{tab(+b.dataset.go);$('stage').scrollIntoView({block:'nearest'})});
 draw();
 </script></body></html>
